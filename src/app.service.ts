@@ -1,45 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ethers } from 'ethers';
 import * as tokenJson from './assets/MyToken.json';
 
-export class PaymentOrderModel {
-  id: number;
-  secret: string;
-  value: number;
-}
+const TOKENIZED_VOTES_ADDRESS = '0x18785Bd1006D5D6Bb2D3930b421cB3EB7ebd77e5';
 
 @Injectable()
 export class AppService {
   provider: ethers.providers.Provider;
-  paymentOrders: PaymentOrderModel[];
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.provider = ethers.getDefaultProvider('goerli');
-    this.paymentOrders = [];
-  }
-  getBlock(blockHashOrBlockTag: string) {
-    return this.provider.getBlock(blockHashOrBlockTag);
   }
 
-  async getTotalSupply(address: string) {
-    const contract = new ethers.Contract(address, tokenJson.abi, this.provider);
-    const bn = await contract.totalSupply();
-    return ethers.utils.formatEther(bn);
+  getTokenAddress() {
+    return { result: TOKENIZED_VOTES_ADDRESS };
   }
 
-  async getAllowance(address: string, owner: string, spender: string) {
-    const contract = new ethers.Contract(address, tokenJson.abi, this.provider);
-    const bn = await contract.allowance(owner, spender, address);
-    return ethers.utils.formatEther(bn);
-  }
-
-  getPaymentOrder(id: string) {
-    // todo
-  }
-  createPaymentOrder(secret: string, value: number) {
-    // todo
-  }
-  claimPaymentOrder(id: string, secret: string, address: string) {
-    // todo
+  // async claimTokens(address: string) {
+  claimTokens(address: string) {
+    // todo: build contract object
+    // todo: pick the signer using the .env keys
+    // todo: connect the contract object to the signer
+    // todo: make the transaction to mint tokens
+    // todo: await the transaction, get the receipt, return the hash
+    return { result: `transaction hash for tokens minted for ${address}` };
   }
 }
